@@ -7,11 +7,11 @@ import (
 	// not to use any of its exported identifiers (functions, types, etc.) directly in code
 )
 
-var sqlDatabase *sql.DB
+var SqlDatabase *sql.DB
 
 func InitDB() {
 	var err error
-	sqlDatabase, err = sql.Open("sqlite3", "api.db")
+	SqlDatabase, err = sql.Open("sqlite3", "api.db")
 	//sql.Open() => driverName must be "sqlite3" to make use of package
 	//sql.Open() => dataSourceName must must end in .db
 
@@ -19,10 +19,10 @@ func InitDB() {
 		panic("Could not connect to the database")
 	}
 
-	defer sqlDatabase.Close()
+	defer SqlDatabase.Close()
 
-	sqlDatabase.SetMaxOpenConns(10)
-	sqlDatabase.SetMaxIdleConns(5)
+	SqlDatabase.SetMaxOpenConns(10)
+	SqlDatabase.SetMaxIdleConns(5)
 
 	createTables()
 }
@@ -43,7 +43,7 @@ func createTables() {
 	// 	panic("Unable to create events table")
 	// }
 
-	_, err := sqlDatabase.Exec(createEventsTable)
+	_, err := SqlDatabase.Exec(createEventsTable)
 
 	if err != nil {
 		panic("Unable to create events table")
