@@ -1,21 +1,45 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"example.com/rest_api/models"
 	"github.com/gin-gonic/gin"
 )
 
+func main() {
+	router := gin.Default()
+
+	router.GET("/events", getEvents)
+	router.POST("/events", createEvent)
+
+	router.Run(":8080")
+}
+
 func getEvents(context *gin.Context) {
 	events := models.GetAllEvents()
 	context.JSON(http.StatusOK, events)
 }
 
-func main() {
-	router := gin.Default()
+func createEvent(context *gin.Context) {
+	var event models.Event
+	err := context.ShouldBindJSON(&event)
 
-	router.GET("/events", getEvents)
+	if err != nil {
+		errString := fmt.Sprintf("Unable to create event: %v", err)
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": errString,
+		})
+		return
+	}
 
-	router.Run(":8080")
+	// dummy data
+	event.ID = 1
+	event.UserID = 1
+
+	context.JSON(http.StatusCreated, gin.H{
+		"message": "Event created successfully",
+		"event":   event,
+	})
 }
