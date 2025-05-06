@@ -20,7 +20,16 @@ func main() {
 }
 
 func getEvents(context *gin.Context) {
-	events := models.GetAllEvents()
+	events, err := models.GetAllEvents()
+
+	if err != nil {
+		errString := fmt.Sprintf("Unable to retrieve events: %v", err)
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": errString,
+		})
+		return
+	}
+
 	context.JSON(http.StatusOK, events)
 }
 
@@ -30,7 +39,7 @@ func createEvent(context *gin.Context) {
 
 	if err != nil {
 		errString := fmt.Sprintf("Unable to create event: %v", err)
-		context.JSON(http.StatusBadRequest, gin.H{
+		context.JSON(http.StatusInternalServerError, gin.H{
 			"message": errString,
 		})
 		return
@@ -40,7 +49,15 @@ func createEvent(context *gin.Context) {
 	event.ID = 1
 	event.UserID = 1
 
-	event.Save()
+	err = event.Save()
+
+	if err != nil {
+		errString := fmt.Sprintf("Unable to create event: %v", err)
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": errString,
+		})
+		return
+	}
 
 	context.JSON(http.StatusCreated, gin.H{
 		"message": "Event created successfully",
