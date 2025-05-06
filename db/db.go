@@ -24,4 +24,28 @@ func InitDB() {
 	sqlDatabase.SetMaxOpenConns(10)
 	sqlDatabase.SetMaxIdleConns(5)
 
+	createTables()
+}
+
+func createTables() {
+	createEventsTable := `CREATE TABLE IF NOT EXISTS events(
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		name TEXT NOT NULL,
+		description TEXT NOT NULL,
+		location TEXT NOT NULL,
+		date DATETIME NOT NULL,
+		user_id INTEGER
+	);
+	`
+	// statement, err := sqlDatabase.Prepare(createEventsTable)
+
+	// if err != nil {
+	// 	panic("Unable to create events table")
+	// }
+
+	_, err := sqlDatabase.Exec(createEventsTable)
+
+	if err != nil {
+		panic("Unable to create events table")
+	}
 }

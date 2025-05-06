@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"net/http"
 
+	"example.com/rest_api/db"
 	"example.com/rest_api/models"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	db.InitDB()
 	router := gin.Default()
 
 	router.GET("/events", getEvents)
