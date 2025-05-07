@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"example.com/rest_api/db"
 	"example.com/rest_api/models"
@@ -14,6 +15,8 @@ func main() {
 	router := gin.Default()
 
 	router.GET("/events", getEvents)
+	router.GET("/events/:id", getEventByID)
+
 	router.POST("/events", createEvent)
 
 	router.Run(":8080")
@@ -31,6 +34,31 @@ func getEvents(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, events)
+}
+
+func getEventByID(context *gin.Context) {
+	stringEvtID := context.Param("id")
+	eventID, err := strconv.ParseInt(stringEvtID, 10, 64)
+
+	if err != nil {
+		errString := fmt.Sprintf("Error converting ID %v to integer: %v", stringEvtID, err)
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": errString,
+		})
+		return
+	}
+
+	event, err := models.GetEvent(eventID)
+
+	if err != nil {
+		errString := fmt.Sprintf("Unable to retrieve event: %v", err)
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": errString,
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, event)
 }
 
 func createEvent(context *gin.Context) {
