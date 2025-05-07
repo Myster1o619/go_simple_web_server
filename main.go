@@ -10,10 +10,7 @@ func main() {
 	db.InitDB()
 	router := gin.Default()
 
-	router.GET("/events", routes.GetEvents)
-	router.GET("/events/:id", routes.GetEventByID)
-
-	router.POST("/events", routes.CreateEvent)
+	routes.RegisterRoutes(router)
 
 	router.Run(":8080")
 }
