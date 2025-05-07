@@ -42,7 +42,7 @@ func getEventByID(context *gin.Context) {
 
 	if err != nil {
 		errString := fmt.Sprintf("Error converting ID %v to integer: %v", stringEvtID, err)
-		context.JSON(http.StatusInternalServerError, gin.H{
+		context.JSON(http.StatusBadRequest, gin.H{
 			"message": errString,
 		})
 		return
@@ -58,7 +58,7 @@ func getEventByID(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, event)
+	context.JSON(http.StatusOK, *event)
 }
 
 func createEvent(context *gin.Context) {
