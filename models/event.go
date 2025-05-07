@@ -41,6 +41,26 @@ func (evt *Event) Save() error {
 	return err
 }
 
+func (evt *Event) Update() error {
+	query := `
+	UPDATE events
+	SET name = ?, description = ?, location = ?, date = ?
+	WHERE id = ?
+	`
+
+	statement, err := db.SqlDatabase.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	_, err = statement.Exec(evt.Name, evt.Description, evt.Location, evt.Date, evt.ID)
+
+	return err
+}
+
 func GetAllEvents() ([]Event, error) {
 	query := `SELECT * FROM events`
 
@@ -94,3 +114,5 @@ func GetEvent(id int64) (*Event, error) {
 
 	return &event, nil
 }
+
+
