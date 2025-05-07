@@ -19,7 +19,7 @@ func InitDB() {
 		panic("Could not connect to the database")
 	}
 
-	defer SqlDatabase.Close()
+	// defer SqlDatabase.Close()
 
 	SqlDatabase.SetMaxOpenConns(10)
 	SqlDatabase.SetMaxIdleConns(5)
