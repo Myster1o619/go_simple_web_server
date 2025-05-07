@@ -1,7 +1,5 @@
 package models
 
-// data logic to go here
-
 import (
 	"time"
 

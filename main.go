@@ -1,12 +1,8 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-	"strconv"
-
 	"example.com/rest_api/db"
-	"example.com/rest_api/models"
+	"example.com/rest_api/routes"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,81 +10,10 @@ func main() {
 	db.InitDB()
 	router := gin.Default()
 
-	router.GET("/events", getEvents)
-	router.GET("/events/:id", getEventByID)
+	router.GET("/events", routes.GetEvents)
+	router.GET("/events/:id", routes.GetEventByID)
 
-	router.POST("/events", createEvent)
+	router.POST("/events", routes.CreateEvent)
 
 	router.Run(":8080")
-}
-
-func getEvents(context *gin.Context) {
-	events, err := models.GetAllEvents()
-
-	if err != nil {
-		errString := fmt.Sprintf("Unable to retrieve events: %v", err)
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"message": errString,
-		})
-		return
-	}
-
-	context.JSON(http.StatusOK, events)
-}
-
-func getEventByID(context *gin.Context) {
-	stringEvtID := context.Param("id")
-	eventID, err := strconv.ParseInt(stringEvtID, 10, 64)
-
-	if err != nil {
-		errString := fmt.Sprintf("Error converting ID %v to integer: %v", stringEvtID, err)
-		context.JSON(http.StatusBadRequest, gin.H{
-			"message": errString,
-		})
-		return
-	}
-
-	event, err := models.GetEvent(eventID)
-
-	if err != nil {
-		errString := fmt.Sprintf("Unable to retrieve event: %v", err)
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"message": errString,
-		})
-		return
-	}
-
-	context.JSON(http.StatusOK, *event)
-}
-
-func createEvent(context *gin.Context) {
-	var event models.Event
-	err := context.ShouldBindJSON(&event)
-
-	if err != nil {
-		errString := fmt.Sprintf("Unable to create event: %v", err)
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"message": errString,
-		})
-		return
-	}
-
-	// dummy data
-	event.ID = 1
-	event.UserID = 1
-
-	err = event.Save()
-
-	if err != nil {
-		errString := fmt.Sprintf("Unable to create event: %v", err)
-		context.JSON(http.StatusBadRequest, gin.H{
-			"message": errString,
-		})
-		return
-	}
-
-	context.JSON(http.StatusCreated, gin.H{
-		"message": "Event created successfully",
-		"event":   event,
-	})
 }
