@@ -34,6 +34,11 @@ func createTables() {
 		password TEXT NOT NULL
 	);
 	`
+	_, err := SqlDatabase.Exec(createUsersTable)
+
+	if err != nil {
+		panic("Unable to create users table")
+	}
 
 	createEventsTable := `CREATE TABLE IF NOT EXISTS events(
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,11 +55,6 @@ func createTables() {
 	// if err != nil {
 	// 	panic("Unable to create events table")
 	// }
-	_, err := SqlDatabase.Exec(createUsersTable)
-
-	if err != nil {
-		panic("Unable to create users table")
-	}
 
 	_, err = SqlDatabase.Exec(createEventsTable)
 	if err != nil {
