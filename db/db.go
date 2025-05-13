@@ -28,6 +28,13 @@ func InitDB() {
 }
 
 func createTables() {
+	createUsersTable := `CREATE TABLE IF NOT EXISTS users(
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		email TEXT NOT NULL UNIQUE,
+		password TEXT NOT NULL
+	);
+	`
+
 	createEventsTable := `CREATE TABLE IF NOT EXISTS events(
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		name TEXT NOT NULL,
@@ -37,14 +44,19 @@ func createTables() {
 		user_id INTEGER
 	);
 	`
+
 	// statement, err := sqlDatabase.Prepare(createEventsTable)
 
 	// if err != nil {
 	// 	panic("Unable to create events table")
 	// }
+	_, err := SqlDatabase.Exec(createUsersTable)
 
-	_, err := SqlDatabase.Exec(createEventsTable)
+	if err != nil {
+		panic("Unable to create users table")
+	}
 
+	_, err = SqlDatabase.Exec(createEventsTable)
 	if err != nil {
 		panic("Unable to create events table")
 	}
