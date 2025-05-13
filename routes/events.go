@@ -61,7 +61,7 @@ func createEvent(context *gin.Context) {
 	}
 
 	// dummy data
-	event.ID = 1
+	// event.ID = 1
 	event.UserID = 1
 
 	err = event.Save()
@@ -128,5 +128,43 @@ func updateEvent(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{
 		"message": "Event updated successfully",
+	})
+}
+
+func deleteEvent(context *gin.Context) {
+	stringEvtID := context.Param("id")
+	eventID, err := strconv.ParseInt(stringEvtID, 10, 64)
+
+	if err != nil {
+		errString := fmt.Sprintf("Error converting ID %v to integer: %v", stringEvtID, err)
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": errString,
+		})
+		return
+	}
+
+	event, err := models.GetEvent(eventID)
+
+	if err != nil {
+		errString := fmt.Sprintf("Unable to retrieve event: %v", err)
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": errString,
+		})
+		return
+	}
+
+	err = event.Delete()
+
+	if err != nil {
+		errString := fmt.Sprintf("Unable to delete event with ID %v: %v", stringEvtID, err)
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": errString,
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": "Event deleted successfully",
+		"deleted_event": event,
 	})
 }
