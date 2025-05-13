@@ -37,6 +37,6 @@ func createUser(context *gin.Context) {
 
 	context.JSON(http.StatusCreated, gin.H{
 		"message": "user created successfully",
-		"event":   usr,
+		"user":   usr,
 	})
 }
