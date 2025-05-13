@@ -12,8 +12,8 @@ type User struct {
 
 func (usr *User) Save() error {
 	query := `
-	INSERT INTO users(id, email, password) 
-	VALUES(?, ?, ?)
+	INSERT INTO users(email, password) 
+	VALUES(?, ?)
 	`
 	statement, err := db.SqlDatabase.Prepare(query)
 
@@ -23,7 +23,7 @@ func (usr *User) Save() error {
 
 	defer statement.Close()
 
-	result, err := statement.Exec(usr.ID, usr.Email, usr.Password)
+	result, err := statement.Exec(usr.Email, usr.Password)
 
 	if err != nil {
 		return err
