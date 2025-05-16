@@ -36,3 +36,29 @@ func createUser(context *gin.Context) {
 		"user":    usr,
 	})
 }
+
+func login(context *gin.Context) {
+	var usr models.User
+	err := context.ShouldBindJSON(&usr)
+
+	if err != nil {
+		errString := fmt.Sprintf("Unable to parse user data: %v", err)
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": errString,
+		})
+		return
+	}
+
+	err = usr.ValidateCredentials()
+
+	if err != nil {
+		context.JSON(http.StatusUnauthorized, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"message": "Login successful",
+	})
+}
