@@ -14,6 +14,16 @@ func createUser(context *gin.Context) {
 	err := context.ShouldBindJSON(&usr)
 
 	if err != nil {
+		errString := fmt.Sprintf("Unable to parse user data: %v", err)
+		context.JSON(http.StatusBadRequest, gin.H{
+			"message": errString,
+		})
+		return
+	}
+
+	err = usr.Save()
+
+	if err != nil {
 		errString := fmt.Sprintf("Unable to create user: %v", err)
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"message": errString,
@@ -21,22 +31,8 @@ func createUser(context *gin.Context) {
 		return
 	}
 
-	// dummy data
-	// event.ID = 1
-	// event.UserID = 1
-
-	err = usr.Save()
-
-	if err != nil {
-		errString := fmt.Sprintf("Unable to create user: %v", err)
-		context.JSON(http.StatusBadRequest, gin.H{
-			"message": errString,
-		})
-		return
-	}
-
 	context.JSON(http.StatusCreated, gin.H{
 		"message": "user created successfully",
-		"user":   usr,
+		"user":    usr,
 	})
 }
