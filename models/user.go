@@ -46,7 +46,7 @@ func (usr *User) Save() error {
 }
 
 func (usr *User) ValidateCredentials() error {
-	query := `SELECT password FROM users WHERE email = ?`
+	query := `SELECT password, id FROM users WHERE email = ?`
 
 	errString := "validating user failed"
 
@@ -54,7 +54,7 @@ func (usr *User) ValidateCredentials() error {
 
 	var retrievedPassword string
 
-	if err := row.Scan(&retrievedPassword); err != nil {
+	if err := row.Scan(&retrievedPassword, &usr.ID); err != nil {
 		err := errors.New(errString)
 		return err
 	}
