@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"example.com/rest_api/models"
-	"example.com/rest_api/utils"
+	// "example.com/rest_api/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -50,26 +50,10 @@ func getEventByID(context *gin.Context) {
 }
 
 func createEvent(context *gin.Context) {
-	token := context.Request.Header.Get("Authorization")
-
-	if token == "" {
-		context.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Unauthorized User",
-		})
-		return
-	}
-
-	usrID, err := utils.ValidateToken(token)
-
-	if err != nil {
-		context.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Unauthorized User",
-		})
-		return
-	}
-
 	var event models.Event
-	err = context.ShouldBindJSON(&event)
+	err := context.ShouldBindJSON(&event)
+
+	usrID := context.GetInt64("usrID")
 
 	if err != nil {
 		errString := fmt.Sprintf("Unable to create event: %v", err)
