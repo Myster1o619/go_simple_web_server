@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"example.com/rest_api/models"
+	"example.com/rest_api/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -58,8 +59,17 @@ func createEvent(context *gin.Context) {
 		return
 	}
 
+	err := utils.ValidateToken(token)
+
+	if err != nil {
+		context.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Unauthorized User",
+		})
+		return
+	}
+
 	var event models.Event
-	err := context.ShouldBindJSON(&event)
+	err = context.ShouldBindJSON(&event)
 
 	if err != nil {
 		errString := fmt.Sprintf("Unable to create event: %v", err)
@@ -173,7 +183,7 @@ func deleteEvent(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, gin.H{
-		"message": "Event deleted successfully",
+		"message":       "Event deleted successfully",
 		"deleted_event": event,
 	})
 }
