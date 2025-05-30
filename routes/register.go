@@ -1,9 +1,11 @@
 package routes
 
-func registerForEvent() {
+import "github.com/gin-gonic/gin"
+
+func registerForEvent(context *gin.Context) {
 
 }
 
-func cancelRegistration() {
-	
+func cancelRegistration(context *gin.Context) {
+
 }
