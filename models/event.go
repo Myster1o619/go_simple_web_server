@@ -130,3 +130,21 @@ func (evt Event) Delete() error {
 
 	return err
 }
+
+func (evt *Event) Register(userID int64) error {
+	query := `
+	INSERT INTO registration(event_id, user_id) 
+	VALUES(?, ?)
+	`
+	statement, err := db.SqlDatabase.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	_, err = statement.Exec(evt.ID, userID)
+
+	return err
+}
