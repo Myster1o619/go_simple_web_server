@@ -96,8 +96,6 @@ func updateEvent(context *gin.Context) {
 	usrID := context.GetInt64("usrID")
 	event, err := models.GetEvent(eventID)
 
-	//check usrID corresponds to user ID on the event
-
 	if err != nil {
 		errString := fmt.Sprintf("Unable to retrieve event: %v", err)
 		context.JSON(http.StatusInternalServerError, gin.H{
