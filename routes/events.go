@@ -155,11 +155,20 @@ func deleteEvent(context *gin.Context) {
 		return
 	}
 
+	usrID := context.GetInt64("usrID")
 	event, err := models.GetEvent(eventID)
 
 	if err != nil {
 		errString := fmt.Sprintf("Unable to retrieve event: %v", err)
 		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": errString,
+		})
+		return
+	}
+
+	if event.UserID != usrID {
+		errString := fmt.Sprintf("Unauthorized user: %v", err)
+		context.JSON(http.StatusUnauthorized, gin.H{
 			"message": errString,
 		})
 		return
