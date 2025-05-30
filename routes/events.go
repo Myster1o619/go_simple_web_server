@@ -93,10 +93,21 @@ func updateEvent(context *gin.Context) {
 		return
 	}
 
-	_, err = models.GetEvent(eventID)
+	usrID := context.GetInt64("usrID")
+	event, err := models.GetEvent(eventID)
+
+	//check usrID corresponds to user ID on the event
 
 	if err != nil {
 		errString := fmt.Sprintf("Unable to retrieve event: %v", err)
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": errString,
+		})
+		return
+	}
+
+	if event.UserID != usrID {
+		errString := fmt.Sprintf("Unable to update event: %v", err)
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"message": errString,
 		})
@@ -108,8 +119,8 @@ func updateEvent(context *gin.Context) {
 	err = context.ShouldBindJSON(&updatedEvent)
 
 	if err != nil {
-		errString := fmt.Sprintf("Unable to update event: %v", err)
-		context.JSON(http.StatusInternalServerError, gin.H{
+		errString := fmt.Sprintf("Unauthorized user: %v", err)
+		context.JSON(http.StatusUnauthorized, gin.H{
 			"message": errString,
 		})
 		return
